@@ -30,15 +30,19 @@ def group_tokens(tokens, tokenizer, spacy_model):
 
     # find noun phrases
     phrases = []
-    phrase_start = []
+    coreword_start = []
+    coreword_end = []
+    phrase_start= []
     phrase_end = []
     core_words = []
     doc = spacy_model(sequence)
     for np in doc.noun_chunks:
         phrases.append(np.text)
         core_words.append(np.root.text)
-        phrase_start.append(np.root.idx)
-        phrase_end.append(np.root.idx + len(np.root.text))
+        coreword_start.append(np.root.idx)
+        coreword_end.append(np.root.idx + len(np.root.text))
+        phrase_start.append(np.start_char)
+        phrase_end.append(np.start_char + len(np.text))
 
     # group tokens
     groups = []
@@ -52,8 +56,10 @@ def group_tokens(tokens, tokenizer, spacy_model):
             'phrase': phrases[i],
             'core_word': core_words[i],
             'tokens': group_tokens,
-            'start_char': phrase_start[i],
-            'end_char': phrase_end[i],
+            'start_char': coreword_start[i],
+            'end_char': coreword_end[i],
+            'phr_start_char': phrase_start[i],
+            'phr_end_char': phrase_end[i]
         }
         groups.append(group)
 
